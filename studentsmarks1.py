@@ -8,7 +8,9 @@ def mean(numbers):
     # A conditional check ensures we avoid dividing by zero, which is a common error scenario in programming.
     # This function finds out the average score. It adds all the scores together and divides by the number of scores.
     # If no scores are given, it safely returns 0 to avoid any errors.
-    return sum(numbers) / len(numbers) if numbers else 0
+    return sum(numbers) / len(numbers) if numbers else 0 # Finds the average value of a list of numbers. It adds all the numbers sum(numbers) together and divides by how many numbers len(numbers) there are. If the list has no numbers, it just returns 0.
+
+
 
 def median(numbers):
     # Sorting the numbers is a common first step in finding the median, taught in most introductory CS courses.
@@ -47,33 +49,40 @@ def calculate_skewness(data):
     skewness = m3 / (m2 ** 1.5)
     return skewness
 
-def get_marks():
-    # Using a loop to continuously accept input until 'done' is a common method for dynamic user input in CS.
-    # Exception handling is used here to manage incorrect inputs, a key concept in robust software design.
-    # Asks you to type in scores one by one until you type 'done'.
-    # It makes sure that only numbers are accepted. If something else is typed, it asks again.
+def get_marks(allow_continue=False):
+    prompt = "Enter additional marks one at a time or separated by commas. Type 'done' to finish." if allow_continue else "Enter marks one at a time or separated by commas. Type 'done' to finish."
+    print(prompt)
     marks = []
-    print("Enter marks one at a time. Type 'done' to finish.")
     while True:
-        entry = input("Enter a mark or 'done': ")
+        entry = input("Enter a mark(s) or 'done': ")
         if entry.lower() == 'done':
-            break
+            if len(marks) >= 2 or allow_continue:
+                break
+            else:
+                print("Please enter at least two marks before finishing.")
+                continue
         try:
-            marks.append(float(entry))
+            # Split by commas and strip spaces, then convert each to float
+            entries = [float(num.strip()) for num in entry.split(',')]
+            marks.extend(entries)
         except ValueError:
-            print("Please enter a valid number. Non-numeric inputs are not accepted.")
+            print("Invalid input. Please enter valid numbers separated by commas if necessary.")
     return marks
+
+
 
 def display_menu():
     # Clearly displaying options for user interaction follows good UI design principles.
     # Shows a list of things you can do with the scores you entered.
+    
     print("\nChoose an option:")
     print("1. Calculate and display the average of the marks")
     print("2. Calculate and display the middle value of the marks")
     print("3. Calculate and display the most frequent mark")
     print("4. Calculate and display the skewness of the marks")
     print("5. Enter a new set of marks")
-    print("6. Exit the program")
+    print("6. Add more numbers to the existing marks")
+    print("7. Exit the program")
 
 def main():
     # The main control function orchestrates user interactions and decision-making processes.
@@ -84,8 +93,8 @@ def main():
     while True:
         print(f"\nYou have entered {len(marks)} marks.")
         display_menu()
-        choice = input("Enter your choice (1-6): ")
-        
+        choice = input("Enter your choice (1-7): ")
+
         if choice == '1':
             print("Average of the marks:", mean(marks))
         elif choice == '2':
@@ -95,12 +104,15 @@ def main():
         elif choice == '4':
             print("Skewness of the marks:", calculate_skewness(marks))
         elif choice == '5':
-            marks = get_marks()
+            marks = get_marks()  # Reset marks with new data
         elif choice == '6':
+            more_marks = get_marks(allow_continue=True)
+            marks.extend(more_marks)
+        elif choice == '7':
             print("Exiting program. Thank you for using the calculator.")
             break
         else:
-            print("Invalid choice. Please enter a number between 1 and 6.")
+            print("Invalid choice. Please enter a number between 1 and 7.")
 
 if __name__ == "__main__":
     main()
